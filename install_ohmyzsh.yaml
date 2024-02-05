@@ -5,25 +5,27 @@
 
   tasks:
   - name: Install dependencies
+    become_user: root
     apt:
       name:
       - zsh
       - git
       state: present
 
-  - name: Install Oh My Zsh
-    become_user: "{{ ansible_user }}"
-    raw: "curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
-
-
-  - name: Copy .zshrc template
-    become_user: root
-    command: cp {{ ansible_user_dir }}/.oh-my-zsh/templates/zshrc.zsh-template {{ ansible_user_dir }}/.zshrc
+  - name: Clone Oh My Zsh repository
+    git:
+      repo: "https://github.com/ohmyzsh/ohmyzsh.git"
+      dest: "{{ ansible_user_dir }}/.oh-my-zsh"
+      version: master
+      update: yes
 
   - name: Change default shell to Zsh
     become: yes
     become_user: root
     command: chsh -s /bin/zsh {{ ansible_user }}
+
+  - name: Copy .zshrc template
+    command: cp {{ ansible_user_dir }}/.oh-my-zsh/templates/zshrc.zsh-template {{ ansible_user_dir }}/.zshrc
 
   - name: Set ZSH theme
     command: sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="jonathan"/' ~/.zshrc
@@ -31,13 +33,13 @@
   - name: Install zsh-autosuggestions
     git:
       repo: https://github.com/zsh-users/zsh-autosuggestions
-      dest: ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+      dest: "{{ ansible_user_dir }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
       update: yes
 
   - name: Install zsh-syntax-highlighting
     git:
       repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
-      dest: ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+      dest: "{{ ansible_user_dir }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
       update: yes
 
   - name: Set ZSH plugins
