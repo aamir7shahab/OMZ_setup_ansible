@@ -1,0 +1,27 @@
+- name: Install Oh My Zsh on Ubuntu
+  hosts: ansible-test
+  become: yes
+
+  tasks:
+  - name: Install dependencies
+    apt:
+      name:
+      - zsh
+      - git
+      state: present
+
+  - name: Install Oh My Zsh
+    become_user: "{{ ansible_user }}"
+    git:
+      repo: "https://github.com/ohmyzsh/ohmyzsh.git"
+      dest: "{{ ansible_user_dir }}/.oh-my-zsh"
+      update: yes
+
+  - name: Copy Oh My Zsh configuration
+    copy:
+      src: "{{ ansible_user_dir }}/.oh-my-zsh/templates/zshrc.zsh-template"
+      dest: "{{ ansible_user_dir }}/.zshrc"
+    become_user: "{{ ansible_user }}"
+
+  - name: Change default shell to Zsh
+    command: chsh -s /bin/zsh "{{ ansible_user }}"
