@@ -1,1 +1,29 @@
-inventory.ini
+# Ignore Ansible Vault files
+vault_password_file
+
+# Ignore Ansible fact caching
+.ansible
+
+# Ignore generated artifacts
+*.retry
+*.log
+*.log.*
+
+# Ignore Ansible roles dependencies
+roles/*/requirements.yml
+
+# Ignore virtual environments
+venv/
+.venv/
+__pycache__/
+
+# Ignore system and editor-specific files
+*.swp
+*.swo
+*.pyc
+*.pyo
+*.pyd
+*.DS_Store
+*.vscode/
+.idea/
+*.ini
